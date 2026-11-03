@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Бренд-диагностика: квиз для владельцев сервисного бизнеса</title>
+  <meta name="description" content="8 вопросов за 2 минуты: узнайте, продаёт ли ваша упаковка без вас лично.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap&subset=cyrillic" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+
+    <!-- Прогресс виден только на экранах с вопросами -->
+    <div class="progress" id="progress" hidden>
+      <button class="back" id="backBtn" type="button" aria-label="Назад">←</button>
+      <div class="bar"><span id="barFill"></span></div>
+      <span class="count" id="count">1 из 8</span>
+    </div>
+
+    <!-- 1. Старт -->
+    <section class="screen active" data-screen="start">
+      <svg class="deco" viewBox="0 0 120 110" aria-hidden="true">
+        <path d="M60 104C20 72 4 52 4 34 4 18 16 6 32 6c11 0 22 6 28 16C66 12 77 6 88 6c16 0 28 12 28 28 0 18-16 38-56 70z" fill="#FF26BE"/>
+      </svg>
+      <h1>Клиенты приходят на вас лично? Проверим, продаёт ли ваша упаковка без вас</h1>
+      <p class="lead">8 вопросов, 2 минуты. В конце вы получите оценку и поймёте, где упаковка вас подводит.</p>
+      <button class="btn" id="startBtn" type="button">Пройти квиз</button>
+      <div class="author">
+        <div class="photo" id="photo"><span>СЗ</span></div>
+        <p><strong>Светлана Зуева</strong><br>бренд-стратег, член Союза дизайнеров России</p>
+      </div>
+    </section>
+
+    <!-- 2. Вводные -->
+    <section class="screen" data-screen="intro">
+      <h2>Два слова о вашем бизнесе</h2>
+      <p class="lead">Это нужно, чтобы разбор был ближе к вашей ситуации. Баллы здесь не считаются.</p>
+
+      <p class="label">Сфера бизнеса</p>
+      <div class="options" id="sphereOptions"></div>
+      <input class="field" id="sphereOther" type="text" placeholder="Напишите свою сферу" hidden>
+
+      <p class="label">Размер команды</p>
+      <div class="options" id="sizeOptions"></div>
+
+      <button class="btn" id="introNext" type="button" disabled>Дальше</button>
+    </section>
+
+    <!-- 3. Вопрос -->
+    <section class="screen" data-screen="question">
+      <h2 id="qTitle"></h2>
+      <div class="options" id="qOptions"></div>
+    </section>
+
+    <!-- 4. Контакты -->
+    <section class="screen" data-screen="contact">
+      <div class="card">
+        <h2>Результат готов. Куда прислать разбор и как с вами связаться?</h2>
+        <form id="leadForm" novalidate>
+          <label class="label" for="fName">Имя</label>
+          <input class="field" id="fName" name="name" type="text" autocomplete="name" required>
+          <p class="error" id="eName" hidden>Напишите, как к вам обращаться</p>
+
+          <label class="label" for="fContact">Telegram или телефон</label>
+          <input class="field" id="fContact" name="contact" type="text" autocomplete="tel" placeholder="@username или +7…" required>
+          <p class="error" id="eContact" hidden>Проверьте контакт: нужен @username или номер телефона</p>
+
+          <label class="label" for="fCompany">Компания <span class="muted">(по желанию)</span></label>
+          <input class="field" id="fCompany" name="company" type="text" autocomplete="organization">
+
+          <label class="check">
+            <input type="checkbox" id="fConsent">
+            <span>Согласен(на) на <a id="privacyLink" href="#privacy" target="_blank" rel="noopener">обработку персональных данных</a></span>
+          </label>
+          <p class="error" id="eConsent" hidden>Без согласия мы не сможем отправить заявку</p>
+
+          <button class="btn" type="submit" id="submitBtn">Показать результат и записаться на диагностику</button>
+          <p class="note">Без спама. Светлана напишет лично.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- 5. Результат -->
+    <section class="screen" data-screen="result">
+      <div class="card">
+        <p class="kicker">Ваш результат</p>
+        <div class="score"><span id="rScore">0</span><small> из 10</small></div>
+        <h2 id="rTitle"></h2>
+        <p id="rText"></p>
+        <div class="risk">
+          <p class="kicker">Главная зона риска</p>
+          <p id="rRisk"></p>
+        </div>
+        <p class="hint">Остальные зоны, причины и три приоритетных шага вы получите в диагностике.</p>
+      </div>
+
+      <div class="card accent">
+        <h3>Заявка принята</h3>
+        <p>Светлана напишет вам в Telegram в течение рабочего дня.</p>
+        <p class="pilot">Пилотная цена <strong>15 000 ₽</strong> вместо 25 000 ₽ для первых трёх компаний. Осталось мест: <strong id="rSpots">3</strong></p>
+        <a class="btn" id="tgBtn" href="#" target="_blank" rel="noopener">Написать Светлане в Telegram</a>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <a id="privacyFooter" href="#privacy">Политика конфиденциальности</a>
+      <span class="logo" aria-hidden="true">B.D</span>
+    </footer>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
