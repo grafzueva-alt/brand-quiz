@@ -1,4 +1,4 @@
-/* Шрифт лежит на самом сайте (корень сайта), без обращений к серверам Google */
+﻿/* Шрифт лежит на самом сайте (корень сайта), без обращений к серверам Google */
 @font-face {
   font-family: "Montserrat";
   src: url("Montserrat-Variable.woff2") format("woff2");
@@ -178,6 +178,8 @@ p { margin: 0 0 12px; }
 .steps strong { display: block; margin-bottom: 2px; color: var(--navy); }
 .label-sm { font-weight: 700; margin: 16px 0 0; }
 .cta-note { text-align: center; font-size: 14px; color: #dfe4ff; margin: 12px 0 0; }
+.cta-note a, .cta-note strong { color: var(--white); }
+.link-btn { background: none; border: 0; padding: 0; color: var(--white); font: inherit; text-decoration: underline; cursor: pointer; }
 .author.on-accent { margin: 0 0 16px; }
 .author.on-accent p { color: #dfe4ff; }
 
@@ -189,6 +191,7 @@ p { margin: 0 0 12px; }
   box-shadow: 0 8px 30px rgba(0, 0, 0, .35); font-size: 14px;
 }
 .cookie[hidden] { display: none; }
+.has-cookie .app { padding-bottom: 160px; }
 .cookie p { margin: 0 0 10px; line-height: 1.45; }
 .cookie a { color: var(--blue); }
 .cookie-btns { display: flex; gap: 10px; }

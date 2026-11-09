@@ -146,11 +146,32 @@
   }
 
   /* ---------- Кнопка в Telegram с готовым текстом ---------- */
+  function telegramText(res) {
+    return "Здравствуйте, Светлана! Хочу записаться на бренд-диагностику. Результат квиза: " +
+      res.score10 + " из 10, главная зона риска: " + res.zone + ".";
+  }
   function telegramUrl(res) {
     if (!CFG.telegramUser) return "#";
-    var text = "Здравствуйте, Светлана! Хочу записаться на бренд-диагностику. Результат квиза: " +
-      res.score10 + " из 10, главная зона риска: " + res.zone + ".";
-    return "https://t.me/" + CFG.telegramUser + "?text=" + encodeURIComponent(text);
+    return "https://t.me/" + CFG.telegramUser + "?text=" + encodeURIComponent(telegramText(res));
+  }
+  // Запасная ссылка: открывает установленное приложение Telegram напрямую, минуя сайт t.me
+  function telegramAppUrl(res) {
+    if (!CFG.telegramUser) return "#";
+    return "tg://resolve?domain=" + CFG.telegramUser + "&text=" + encodeURIComponent(telegramText(res));
+  }
+  function copyText(text, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done) {
+    var ta = document.createElement("textarea");
+    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
   }
 
   /* ---------- Результат ---------- */
@@ -161,6 +182,19 @@
     $("rRisk").textContent = "Больше всего вопросов у нас возникло к зоне: " + res.zone;
     $("rSpots").textContent = CFG.pilotSpotsLeft;
     $("tgBtn").href = telegramUrl(res);
+
+    // Запасные способы связаться, если ссылка t.me не открывается (например, на компьютере)
+    $("tgAlt").hidden = !CFG.telegramUser;
+    $("tgName").textContent = "@" + (CFG.telegramUser || "");
+    $("tgApp").href = telegramAppUrl(res);
+    $("tgCopy").onclick = function () {
+      var btn = $("tgCopy");
+      copyText(telegramText(res), function () {
+        goal("tg_copy");
+        btn.textContent = "Скопировано";
+        setTimeout(function () { btn.textContent = "Скопировать сообщение"; }, 2000);
+      });
+    };
 
     // Карта зон: полоска по каждой из семи зон
     var map = $("zoneMap");
@@ -208,11 +242,14 @@
     if (choice === "yes") { initMetrika(); return; }
     if (choice === "no") return;
     $("cookie").hidden = false;
+    document.body.classList.add("has-cookie");
     $("cookieOk").addEventListener("click", function () {
-      saveCookieChoice("yes"); $("cookie").hidden = true; initMetrika();
+      saveCookieChoice("yes"); $("cookie").hidden = true;
+      document.body.classList.remove("has-cookie"); initMetrika();
     });
     $("cookieNo").addEventListener("click", function () {
       saveCookieChoice("no"); $("cookie").hidden = true;
+      document.body.classList.remove("has-cookie");
     });
   }
 
@@ -239,6 +276,7 @@
     });
     $("backBtn").addEventListener("click", goBack);
     $("tgBtn").addEventListener("click", function () { goal("tg_click"); });
+    $("tgApp").addEventListener("click", function () { goal("tg_click"); });
   }
 
   init();

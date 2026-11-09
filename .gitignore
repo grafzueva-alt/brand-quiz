@@ -1,0 +1,11 @@
+# Отправляем на GitHub только файлы сайта
+*
+!.gitignore
+!CNAME
+!index.html
+!style.css
+!script.js
+!config.js
+!privacy.html
+!photo.jpg
+!Montserrat-Variable.woff2
