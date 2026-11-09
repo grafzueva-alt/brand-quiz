@@ -3,9 +3,6 @@
 
   var CFG = window.QUIZ_CONFIG || {};
 
-  var SPHERES = ["Бухгалтерия или юристы", "Клиника", "Салон", "Агентство", "Сервисный центр", "Другое"];
-  var SIZES = ["До 10 человек", "10–30 человек", "Больше 30 человек"];
-
   // Баллы: порядок вариантов = 0, 1, 2
   var QUESTIONS = [
     { zone: "Источники клиентов", title: "Откуда приходят клиенты?",
@@ -60,12 +57,13 @@
       text: "База у вас сильная, и это не комплимент для вежливости. Скорее всего, не хватает точных формулировок того, за что вас выбирают, чтобы сайт, соцсети и предложения говорили одним голосом." }
   ];
 
-  var state = { sphere: "", sphereOther: "", size: "", answers: [], step: 0 };
+  // Ответы живут только в памяти страницы: никуда не отправляются и не сохраняются
+  var state = { answers: [], step: 0 };
 
   var $ = function (id) { return document.getElementById(id); };
   var screens = document.querySelectorAll(".screen");
 
-  /* ---------- Метрика ---------- */
+  /* ---------- Метрика (включается, только если в config.js указан номер счётчика) ---------- */
   function initMetrika() {
     if (!CFG.metrikaId) return;
     (function (m, e, t, r, i, k, a) {
@@ -100,33 +98,6 @@
     });
   }
 
-  /* ---------- Вводные ---------- */
-  var sphereIdx = null, sizeIdx = null;
-
-  function updateIntroReady() {
-    var otherNeeded = sphereIdx === SPHERES.length - 1;
-    var ok = sphereIdx !== null && sizeIdx !== null && (!otherNeeded || $("sphereOther").value.trim());
-    $("introNext").disabled = !ok;
-  }
-
-  function pickSphere(idx) {
-    sphereIdx = idx;
-    $("sphereOther").hidden = idx !== SPHERES.length - 1;
-    makeOptions($("sphereOptions"), SPHERES, pickSphere, idx);
-    updateIntroReady();
-  }
-
-  function pickSize(idx) {
-    sizeIdx = idx;
-    makeOptions($("sizeOptions"), SIZES, pickSize, idx);
-    updateIntroReady();
-  }
-
-  function renderIntro() {
-    makeOptions($("sphereOptions"), SPHERES, pickSphere, sphereIdx);
-    makeOptions($("sizeOptions"), SIZES, pickSize, sizeIdx);
-  }
-
   /* ---------- Вопросы ---------- */
   function renderQuestion() {
     var q = QUESTIONS[state.step];
@@ -144,7 +115,7 @@
         } else {
           $("barFill").style.width = "100%";
           goal("quiz_finish");
-          show("contact");
+          showResult(calculate());
         }
       }, 180);
     }, state.answers[state.step]);
@@ -155,7 +126,7 @@
       state.step--;
       renderQuestion();
     } else {
-      show("intro");
+      show("start");
     }
   }
 
@@ -174,65 +145,23 @@
     return { sum: sum, score10: score10, level: level, zone: worst };
   }
 
-  /* ---------- Форма ---------- */
-  function validContact(v) {
-    v = v.trim();
-    if (/^@?[A-Za-z][A-Za-z0-9_]{4,31}$/.test(v)) return true;
-    var digits = v.replace(/\D/g, "");
-    return /^[+\d][\d\s()\-]*$/.test(v) && digits.length >= 10 && digits.length <= 15;
+  /* ---------- Кнопка в Telegram с готовым текстом ---------- */
+  function telegramUrl(res) {
+    if (!CFG.telegramUser) return "#";
+    var text = "Здравствуйте, Светлана! Прошёл(ла) квиз «Бренд-диагностика»: результат " +
+      res.score10 + " из 10 («" + res.level.title + "»). Главная зона риска: " + res.zone +
+      ". Хочу узнать про диагностику.";
+    return "https://t.me/" + CFG.telegramUser + "?text=" + encodeURIComponent(text);
   }
 
-  function utm() {
-    var p = new URLSearchParams(location.search), out = {};
-    ["utm_source", "utm_medium", "utm_campaign"].forEach(function (k) { if (p.get(k)) out[k] = p.get(k); });
-    return out;
-  }
-
-  function buildPayload(res) {
-    return {
-      name: $("fName").value.trim(),
-      contact: $("fContact").value.trim(),
-      company: $("fCompany").value.trim(),
-      sphere: sphereIdx === SPHERES.length - 1 ? ("Другое: " + $("sphereOther").value.trim()) : SPHERES[sphereIdx],
-      size: SIZES[sizeIdx],
-      answers: QUESTIONS.map(function (q, i) { return { q: q.title, a: q.options[state.answers[i]], score: state.answers[i] }; }),
-      sum: res.sum, score10: res.score10, level: res.level.title, riskZone: res.zone,
-      utm: utm(), date: new Date().toISOString()
-    };
-  }
-
-  function sendLead(payload) {
-    try { localStorage.setItem("quiz_last_lead", JSON.stringify(payload)); } catch (e) {}
-    if (!CFG.endpoint) {
-      console.log("Заявка (тестовый режим, не отправлена):", payload);
-      return;
-    }
-    fetch(CFG.endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    }).then(function (r) {
-      if (r.ok) { try { localStorage.removeItem("quiz_pending_lead"); } catch (e) {} }
-      else throw new Error("HTTP " + r.status);
-    }).catch(function () {
-      // Заявку не теряем: сохраняем, повторим при следующем открытии
-      try { localStorage.setItem("quiz_pending_lead", JSON.stringify(payload)); } catch (e) {}
-    });
-  }
-
-  function retryPending() {
-    if (!CFG.endpoint) return;
-    try {
-      var p = localStorage.getItem("quiz_pending_lead");
-      if (p) sendLead(JSON.parse(p));
-    } catch (e) {}
-  }
-
+  /* ---------- Результат ---------- */
   function showResult(res) {
     $("rScore").textContent = res.score10;
     $("rTitle").textContent = res.level.title;
     $("rText").textContent = res.level.text;
     $("rRisk").textContent = "Больше всего вопросов у нас возникло к зоне: " + res.zone;
+    $("rSpots").textContent = CFG.pilotSpotsLeft;
+    $("tgBtn").href = telegramUrl(res);
 
     // Карта зон: полоска по каждой из семи зон
     var map = $("zoneMap");
@@ -258,8 +187,7 @@
       li.textContent = t;
       sym.appendChild(li);
     });
-    $("rSpots").textContent = CFG.pilotSpotsLeft;
-    $("tgBtn").href = CFG.telegramLink || "#";
+
     show("result");
     // Полоски заполняются после показа экрана, чтобы сработала анимация
     setTimeout(function () {
@@ -267,28 +195,9 @@
     }, 80);
   }
 
-  function setError(id, on) { $(id).hidden = !on; }
-
-  function onSubmit(e) {
-    e.preventDefault();
-    var okName = $("fName").value.trim().length > 0;
-    var okContact = validContact($("fContact").value);
-    var okConsent = $("fConsent").checked;
-    setError("eName", !okName);
-    setError("eContact", !okContact);
-    setError("eConsent", !okConsent);
-    if (!(okName && okContact && okConsent)) return;
-
-    var res = calculate();
-    sendLead(buildPayload(res));
-    goal("lead_submit");
-    showResult(res);
-  }
-
   /* ---------- Запуск ---------- */
   function init() {
     initMetrika();
-    retryPending();
 
     // Фото: если файла нет, остаётся заглушка с инициалами
     if (CFG.photo) {
@@ -301,23 +210,15 @@
       });
     }
 
-    if (CFG.privacyUrl) {
-      $("privacyLink").href = CFG.privacyUrl;
-      $("privacyFooter").href = CFG.privacyUrl;
-    }
-    $("tgBtn").href = CFG.telegramLink || "#";
+    if (CFG.privacyUrl) { $("privacyFooter").href = CFG.privacyUrl; }
 
-    renderIntro();
-
-    $("startBtn").addEventListener("click", function () { goal("quiz_start"); show("intro"); });
-    $("sphereOther").addEventListener("input", updateIntroReady);
-    $("introNext").addEventListener("click", function () {
+    $("startBtn").addEventListener("click", function () {
+      goal("quiz_start");
       state.step = 0; state.answers = [];
       show("question"); renderQuestion();
     });
     $("backBtn").addEventListener("click", goBack);
     $("tgBtn").addEventListener("click", function () { goal("tg_click"); });
-    $("leadForm").addEventListener("submit", onSubmit);
   }
 
   init();

@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Бренд-диагностика: квиз для владельцев сервисного бизнеса</title>
   <meta name="description" content="Вас хвалят и рекомендуют, а продавать всё равно приходится вам. 8 вопросов за 2 минуты: проверьте, продаёт ли упаковка бизнеса без вас.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800&display=swap&subset=cyrillic" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -34,56 +31,13 @@
       </div>
     </section>
 
-    <!-- 2. Вводные -->
-    <section class="screen" data-screen="intro">
-      <h2>Два слова о вашем бизнесе</h2>
-      <p class="lead">Это нужно, чтобы разбор был ближе к вашей ситуации. Баллы здесь не считаются.</p>
-
-      <p class="label">Сфера бизнеса</p>
-      <div class="options" id="sphereOptions"></div>
-      <input class="field" id="sphereOther" type="text" placeholder="Напишите свою сферу" hidden>
-
-      <p class="label">Размер команды</p>
-      <div class="options" id="sizeOptions"></div>
-
-      <button class="btn" id="introNext" type="button" disabled>Дальше</button>
-    </section>
-
-    <!-- 3. Вопрос -->
+    <!-- 2. Вопрос -->
     <section class="screen" data-screen="question">
       <h2 id="qTitle"></h2>
       <div class="options" id="qOptions"></div>
     </section>
 
-    <!-- 4. Контакты -->
-    <section class="screen" data-screen="contact">
-      <div class="card">
-        <h2>Результат готов. Куда прислать разбор и как с вами связаться?</h2>
-        <form id="leadForm" novalidate>
-          <label class="label" for="fName">Имя</label>
-          <input class="field" id="fName" name="name" type="text" autocomplete="name" required>
-          <p class="error" id="eName" hidden>Напишите, как к вам обращаться</p>
-
-          <label class="label" for="fContact">Telegram или телефон</label>
-          <input class="field" id="fContact" name="contact" type="text" autocomplete="tel" placeholder="@username или +7…" required>
-          <p class="error" id="eContact" hidden>Проверьте контакт: нужен @username или номер телефона</p>
-
-          <label class="label" for="fCompany">Компания <span class="muted">(по желанию)</span></label>
-          <input class="field" id="fCompany" name="company" type="text" autocomplete="organization">
-
-          <label class="check">
-            <input type="checkbox" id="fConsent">
-            <span>Согласен(на) на <a id="privacyLink" href="#privacy" target="_blank" rel="noopener">обработку персональных данных</a></span>
-          </label>
-          <p class="error" id="eConsent" hidden>Без согласия мы не сможем отправить заявку</p>
-
-          <button class="btn" type="submit" id="submitBtn">Показать результат и записаться на диагностику</button>
-          <p class="note">Без спама. Я напишу лично.</p>
-        </form>
-      </div>
-    </section>
-
-    <!-- 5. Результат -->
+    <!-- 3. Результат -->
     <section class="screen" data-screen="result">
       <div class="card">
         <p class="kicker">Ваш результат</p>
@@ -127,8 +81,8 @@
           <div class="photo"><span>СЗ</span></div>
           <p><strong>Светлана Зуева</strong><br>бренд-стратег, 20+ лет в дизайне и рекламе</p>
         </div>
-        <h3>Заявка принята</h3>
-        <p>Я напишу вам в Telegram в течение рабочего дня. Без «мы подумаем».</p>
+        <h3>Хотите разобрать результат?</h3>
+        <p>Напишите мне в Telegram: сообщение уже готово, останется нажать «Отправить». Я отвечу в течение рабочего дня. Без «мы подумаем».</p>
         <p class="label-sm">В диагностике вы получите:</p>
         <ul class="list light">
           <li>отчёт на 5–7 страниц;</li>
@@ -142,8 +96,7 @@
     </section>
 
     <footer class="footer">
-      <a id="privacyFooter" href="#privacy">Политика конфиденциальности</a>
-      <span class="logo" aria-hidden="true">B.D</span>
+      <a id="privacyFooter" href="privacy.html">Как работает квиз</a>
     </footer>
   </main>
 

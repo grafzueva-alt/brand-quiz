@@ -1,3 +1,12 @@
+/* Шрифт лежит на самом сайте (корень сайта), без обращений к серверам Google */
+@font-face {
+  font-family: "Montserrat";
+  src: url("Montserrat-Variable.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --navy: #000f6b;
   --navy-2: #0a1a85;
@@ -168,10 +177,6 @@ p { margin: 0 0 12px; }
   font-size: 13px; color: var(--muted);
 }
 .footer a { color: var(--muted); }
-.logo {
-  width: 36px; height: 36px; border-radius: 50%; background: #ff4e10; color: #1a1a1a;
-  font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center;
-}
 
 @media (min-width: 700px) {
   .app { padding-top: 48px; }
@@ -181,3 +186,4 @@ p { margin: 0 0 12px; }
   .screen { animation: none; }
   .bar span, .btn { transition: none; }
 }
+
