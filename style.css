@@ -4,6 +4,8 @@
   --pink: #ff26be;
   --blue: #2b4bff;
   --violet: #a63be6;
+  --green: #22bb4d;
+  --green-text: #148a37;
   --white: #ffffff;
   --ink: #0b1030;
   --muted: #8f98d6;
@@ -128,6 +130,37 @@ p { margin: 0 0 12px; }
 .risk p:last-child { margin: 0; font-weight: 700; }
 .pilot { background: rgba(255,255,255,.14); border-radius: 12px; padding: 12px 14px; margin: 16px 0; }
 .card.accent .btn { background: var(--white); color: var(--blue); }
+
+/* Карта зон */
+.card h3 { color: var(--navy); }
+.card.accent h3 { color: var(--white); }
+.zones { list-style: none; margin: 16px 0 12px; padding: 0; display: grid; gap: 14px; }
+.zone-head { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.zone-state { font-weight: 700; white-space: nowrap; }
+.zone-track { height: 10px; border-radius: 5px; background: #e6e8f7; overflow: hidden; }
+.zone-fill { display: block; height: 100%; width: 0; border-radius: 5px; transition: width .9s cubic-bezier(.2,.8,.2,1); }
+.weak .zone-fill, .dot.weak { background: var(--pink); }
+.mid .zone-fill, .dot.mid { background: var(--violet); }
+.strong .zone-fill, .dot.strong { background: var(--green); }
+.weak .zone-state { color: #d6168f; }
+.mid .zone-state { color: var(--violet); }
+.strong .zone-state { color: var(--green-text); }
+.legend { display: flex; gap: 16px; font-size: 13px; color: #444b7a; }
+.legend span { display: flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.zone.is-risk .zone-head { color: #d6168f; }
+
+/* Списки в карточках */
+.list { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.list li { position: relative; padding-left: 22px; }
+.list li::before {
+  content: ""; position: absolute; left: 0; top: .5em; width: 10px; height: 10px;
+  border-radius: 50%; background: var(--pink);
+}
+.list.light li::before { background: var(--white); }
+.label-sm { font-weight: 700; margin: 16px 0 0; }
+.author.on-accent { margin: 0 0 16px; }
+.author.on-accent p { color: #dfe4ff; }
 
 /* Подвал */
 .footer {

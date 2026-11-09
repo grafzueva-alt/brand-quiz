@@ -29,7 +29,7 @@
       <p class="lead">8 вопросов, 2 минуты. В конце вы получите оценку и поймёте, где упаковка вас подводит.</p>
       <button class="btn" id="startBtn" type="button">Пройти квиз</button>
       <div class="author">
-        <div class="photo" id="photo"><span>СЗ</span></div>
+        <div class="photo"><span>СЗ</span></div>
         <p><strong>Светлана Зуева</strong><br>бренд-стратег, член Союза дизайнеров России</p>
       </div>
     </section>
@@ -90,16 +90,52 @@
         <div class="score"><span id="rScore">0</span><small> из 10</small></div>
         <h2 id="rTitle"></h2>
         <p id="rText"></p>
+      </div>
+
+      <div class="card">
+        <h3>Карта вашей упаковки</h3>
+        <p class="hint">Из этих семи зон клиент складывает впечатление о компании.</p>
+        <ul class="zones" id="zoneMap"></ul>
+        <div class="legend">
+          <span><i class="dot weak"></i>слабо</span>
+          <span><i class="dot mid"></i>средне</span>
+          <span><i class="dot strong"></i>сильно</span>
+        </div>
         <div class="risk">
           <p class="kicker">Главная зона риска</p>
           <p id="rRisk"></p>
         </div>
-        <p class="hint">Остальные зоны, причины и три приоритетных шага вы получите в диагностике.</p>
+      </div>
+
+      <div class="card">
+        <h3>Что это обычно значит</h3>
+        <ul class="list" id="rSymptoms"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Чего не видно из квиза</h3>
+        <ul class="list">
+          <li>За что клиенты платят вам на самом деле, а не за что, как вам кажется.</li>
+          <li>Какие места в упаковке противоречат этому.</li>
+          <li>С чего начать, чтобы изменения заметили в продажах.</li>
+        </ul>
+        <p class="hint">Ответы есть только после разговора с вашими клиентами. Его делаю я в рамках диагностики.</p>
       </div>
 
       <div class="card accent">
+        <div class="author on-accent">
+          <div class="photo"><span>СЗ</span></div>
+          <p><strong>Светлана Зуева</strong><br>бренд-стратег</p>
+        </div>
         <h3>Заявка принята</h3>
         <p>Светлана напишет вам в Telegram в течение рабочего дня.</p>
+        <p class="label-sm">В диагностике вы получите:</p>
+        <ul class="list light">
+          <li>отчёт на 5–7 страниц;</li>
+          <li>3–5 сильных сторон словами ваших клиентов;</li>
+          <li>места, где упаковка им противоречит;</li>
+          <li>3 приоритетных шага, с чего начать.</li>
+        </ul>
         <p class="pilot">Пилотная цена <strong>15 000 ₽</strong> вместо 25 000 ₽ для первых трёх компаний. Осталось мест: <strong id="rSpots">3</strong></p>
         <a class="btn" id="tgBtn" href="#" target="_blank" rel="noopener">Написать Светлане в Telegram</a>
       </div>

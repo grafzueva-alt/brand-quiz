@@ -29,12 +29,34 @@
 
   var MAX_SCORE = QUESTIONS.length * 2;
 
+  // Состояния зоны по баллу вопроса: 0, 1, 2
+  var ZONE_STATES = [
+    { cls: "weak", label: "Слабо", width: 18 },
+    { cls: "mid", label: "Средне", width: 58 },
+    { cls: "strong", label: "Сильно", width: 100 }
+  ];
+
   var LEVELS = [
     { max: 4, title: "Бизнес держится на вас",
+      symptoms: [
+        "Цену обсуждают раньше, чем ценность.",
+        "Каждому новому клиенту приходится рассказывать о вас лично.",
+        "Сайт и соцсети есть, но заявки с них случайны."
+      ],
       text: "Клиенты приходят на вас, а не на компанию. Упаковка пока почти не помогает продавать, поэтому каждая сделка проходит через вас лично. Это нормальный этап, но дальше расти на сарафане и личной энергии трудно." },
     { max: 7, title: "Упаковка работает частично",
+      symptoms: [
+        "Клиенты вас хвалят, но не могут объяснить, чем вы отличаетесь.",
+        "На сайте, в соцсетях и в предложениях вы звучите по-разному.",
+        "Часть продаж идёт сама, остальное по-прежнему держится на вас."
+      ],
       text: "Часть инструментов уже помогает, но в других местах упаковка противоречит тому, за что вас на самом деле выбирают. Клиент слышит разные версии вас на сайте, в соцсетях и в предложениях." },
     { max: 10, title: "Основа есть, нужна огранка",
+      symptoms: [
+        "Клиенты понимают, чем вы хороши, но у каждого свои слова.",
+        "Инструменты работают по отдельности, а не усиливают друг друга.",
+        "Рост упирается не в упаковку, а в точность посыла."
+      ],
       text: "У вас сильная база. Скорее всего, не хватает точной формулировки, за что вас выбирают, чтобы все инструменты говорили одним голосом." }
   ];
 
@@ -211,9 +233,38 @@
     $("rTitle").textContent = res.level.title;
     $("rText").textContent = res.level.text;
     $("rRisk").textContent = "Больше всего вопросов у нас возникло к зоне: " + res.zone;
+
+    // Карта зон: полоска по каждой из семи зон
+    var map = $("zoneMap");
+    map.innerHTML = "";
+    var fills = [];
+    QUESTIONS.forEach(function (q, i) {
+      if (!q.zone) return;
+      var st = ZONE_STATES[state.answers[i]];
+      var li = document.createElement("li");
+      li.className = "zone " + st.cls + (q.zone === res.zone ? " is-risk" : "");
+      li.innerHTML = '<div class="zone-head"><span></span><span class="zone-state"></span></div>' +
+        '<div class="zone-track"><span class="zone-fill"></span></div>';
+      li.querySelector(".zone-head span").textContent = q.zone;
+      li.querySelector(".zone-state").textContent = st.label;
+      fills.push([li.querySelector(".zone-fill"), st.width]);
+      map.appendChild(li);
+    });
+
+    var sym = $("rSymptoms");
+    sym.innerHTML = "";
+    res.level.symptoms.forEach(function (t) {
+      var li = document.createElement("li");
+      li.textContent = t;
+      sym.appendChild(li);
+    });
     $("rSpots").textContent = CFG.pilotSpotsLeft;
     $("tgBtn").href = CFG.telegramLink || "#";
     show("result");
+    // Полоски заполняются после показа экрана, чтобы сработала анимация
+    setTimeout(function () {
+      fills.forEach(function (f) { f[0].style.width = f[1] + "%"; });
+    }, 80);
   }
 
   function setError(id, on) { $(id).hidden = !on; }
@@ -241,10 +292,13 @@
 
     // Фото: если файла нет, остаётся заглушка с инициалами
     if (CFG.photo) {
-      var img = new Image();
-      img.alt = "Светлана Зуева";
-      img.onload = function () { $("photo").innerHTML = ""; $("photo").appendChild(img); };
-      img.src = CFG.photo;
+      var holders = document.querySelectorAll(".photo");
+      Array.prototype.forEach.call(holders, function (holder) {
+        var img = new Image();
+        img.alt = "Светлана Зуева";
+        img.onload = function () { holder.innerHTML = ""; holder.appendChild(img); };
+        img.src = CFG.photo;
+      });
     }
 
     if (CFG.privacyUrl) {
