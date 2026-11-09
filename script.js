@@ -148,9 +148,8 @@
   /* ---------- Кнопка в Telegram с готовым текстом ---------- */
   function telegramUrl(res) {
     if (!CFG.telegramUser) return "#";
-    var text = "Здравствуйте, Светлана! Прошёл(ла) квиз «Бренд-диагностика»: результат " +
-      res.score10 + " из 10 («" + res.level.title + "»). Главная зона риска: " + res.zone +
-      ". Хочу узнать про диагностику.";
+    var text = "Здравствуйте, Светлана! Хочу записаться на бренд-диагностику. Результат квиза: " +
+      res.score10 + " из 10, главная зона риска: " + res.zone + ".";
     return "https://t.me/" + CFG.telegramUser + "?text=" + encodeURIComponent(text);
   }
 

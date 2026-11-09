@@ -46,7 +46,8 @@ body {
 }
 
 h1, h2, h3 { margin: 0 0 12px; font-weight: 800; line-height: 1.15; }
-h1 { font-size: clamp(28px, 8vw, 40px); }
+h1 { font-size: clamp(28px, 8vw, 40px); text-wrap: balance; }
+h2, h3 { text-wrap: balance; }
 h2 { font-size: clamp(22px, 6vw, 30px); }
 h3 { font-size: 22px; }
 p { margin: 0 0 12px; }
@@ -176,6 +177,7 @@ p { margin: 0 0 12px; }
 }
 .steps strong { display: block; margin-bottom: 2px; color: var(--navy); }
 .label-sm { font-weight: 700; margin: 16px 0 0; }
+.cta-note { text-align: center; font-size: 14px; color: #dfe4ff; margin: 12px 0 0; }
 .author.on-accent { margin: 0 0 16px; }
 .author.on-accent p { color: #dfe4ff; }
 
