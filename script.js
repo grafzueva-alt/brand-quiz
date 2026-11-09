@@ -195,8 +195,29 @@
   }
 
   /* ---------- Запуск ---------- */
+  // Метрика запускается только после согласия на cookies
+  function cookieChoice() {
+    try { return localStorage.getItem("quiz_cookies"); } catch (e) { return null; }
+  }
+  function saveCookieChoice(v) {
+    try { localStorage.setItem("quiz_cookies", v); } catch (e) {}
+  }
+  function initAnalytics() {
+    if (!CFG.metrikaId) return;
+    var choice = cookieChoice();
+    if (choice === "yes") { initMetrika(); return; }
+    if (choice === "no") return;
+    $("cookie").hidden = false;
+    $("cookieOk").addEventListener("click", function () {
+      saveCookieChoice("yes"); $("cookie").hidden = true; initMetrika();
+    });
+    $("cookieNo").addEventListener("click", function () {
+      saveCookieChoice("no"); $("cookie").hidden = true;
+    });
+  }
+
   function init() {
-    initMetrika();
+    initAnalytics();
 
     // Фото: если файла нет, остаётся заглушка с инициалами
     if (CFG.photo) {

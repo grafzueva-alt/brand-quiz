@@ -181,6 +181,23 @@ p { margin: 0 0 12px; }
 .author.on-accent { margin: 0 0 16px; }
 .author.on-accent p { color: #dfe4ff; }
 
+/* Баннер cookies */
+.cookie {
+  position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 10;
+  max-width: 536px; margin: 0 auto; padding: 14px 16px;
+  background: var(--white); color: var(--ink); border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .35); font-size: 14px;
+}
+.cookie[hidden] { display: none; }
+.cookie p { margin: 0 0 10px; line-height: 1.45; }
+.cookie a { color: var(--blue); }
+.cookie-btns { display: flex; gap: 10px; }
+.cookie-btn {
+  flex: 1; min-height: 44px; border: 0; border-radius: 10px; background: var(--grad);
+  color: var(--white); font: inherit; font-weight: 700; cursor: pointer;
+}
+.cookie-btn.ghost { background: #eef0fb; color: var(--ink); }
+
 /* Подвал */
 .footer {
   margin-top: 24px; display: flex; justify-content: space-between; align-items: center;
