@@ -181,7 +181,11 @@
     $("rText").textContent = res.level.text;
     $("rRisk").textContent = "Больше всего вопросов у нас возникло к зоне: " + res.zone;
     $("rSpots").textContent = CFG.pilotSpotsLeft;
-    $("tgBtn").href = telegramUrl(res);
+    // На телефоне ссылка t.me открывает приложение сама. На компьютере сайт t.me может не открываться,
+    // поэтому основная кнопка сразу зовёт установленное приложение Telegram.
+    var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    $("tgBtn").href = isMobile ? telegramUrl(res) : telegramAppUrl(res);
+    if (CFG.telegramUser) { $("tgBtn").target = isMobile ? "_blank" : "_self"; }
 
     // Запасные способы связаться, если ссылка t.me не открывается (например, на компьютере)
     $("tgAlt").hidden = !CFG.telegramUser;
