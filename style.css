@@ -53,6 +53,8 @@ h3 { font-size: 22px; }
 p { margin: 0 0 12px; }
 
 .lead { color: #d6dbff; font-size: 17px; margin-bottom: 24px; }
+.lead-tight { margin-bottom: 10px; }
+.lead-note { color: var(--pink); font-weight: 700; font-size: 16px; margin: 0 0 24px; }
 .label { font-weight: 700; margin: 20px 0 8px; display: block; }
 .muted { color: var(--muted); font-weight: 400; }
 .note { text-align: center; color: var(--muted); font-size: 14px; margin-top: 12px; }
