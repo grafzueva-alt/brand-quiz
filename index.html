@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Бренд-диагностика: квиз для владельцев сервисного бизнеса</title>
-  <meta name="description" content="Вас хвалят и рекомендуют, а продавать всё равно приходится вам. 8 вопросов за 2 минуты: проверьте, продаёт ли упаковка бизнеса без вас.">
+  <meta name="description" content="Вас хвалят и рекомендуют, а продавать все равно приходится вам. 8 вопросов за 2 минуты: проверьте, продает ли упаковка бизнеса без вас.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
       <svg class="deco" viewBox="0 0 120 110" aria-hidden="true">
         <path d="M60 104C20 72 4 52 4 34 4 18 16 6 32 6c11 0 22 6 28 16C66 12 77 6 88 6c16 0 28 12 28 28 0 18-16 38-56 70z" fill="#FF26BE"/>
       </svg>
-      <h1>Вас хвалят и рекомендуют, а продавать всё равно приходится&nbsp;вам</h1>
+      <h1>Вас хвалят и рекомендуют, а продавать все равно приходится&nbsp;вам</h1>
       <p class="lead lead-tight">Проверим упаковку бизнеса: сайт, соцсети, предложения. Продают ли они, пока вы в отпуске или просто спите.</p>
       <p class="lead-note">8&nbsp;вопросов, 2&nbsp;минуты.</p>
       <button class="btn" id="startBtn" type="button">Пройти квиз</button>
@@ -57,7 +57,7 @@
           <span><i class="dot strong"></i>сильно</span>
         </div>
         <div class="risk">
-          <p class="kicker">Главная зона риска</p>
+          <p class="kicker" id="rRiskLabel">Главная зона риска</p>
           <p id="rRisk"></p>
         </div>
       </div>
@@ -88,16 +88,16 @@
       <div class="card accent">
         <div class="author on-accent">
           <div class="photo"><span>СЗ</span></div>
-          <p><strong>Светлана Зуева</strong><br>бренд-стратег, 20+ лет в дизайне и рекламе</p>
+          <p><strong>Светлана Зуева</strong><br>бренд-стратег, 30+ лет в дизайне и рекламе</p>
         </div>
-        <h3>Пусть продаёт упаковка, а не только вы</h3>
+        <h3>Пусть продает упаковка, а не только вы</h3>
         <p>Вы узнаете, за что клиенты выбирают вас на самом деле, и получите три шага, чтобы сайт, соцсети и предложения продавали за вас: больше заявок, меньше уговоров и скидок.</p>
         <ul class="list light">
-          <li>отчёт на 5–7 страниц, по которому можно действовать на следующий день;</li>
+          <li>отчет на 5–7 страниц, по которому можно действовать на следующий день;</li>
           <li>сильные стороны вашего бизнеса словами ваших клиентов;</li>
           <li>места, где упаковка тормозит продажи.</li>
         </ul>
-        <p class="pilot">Пилотная цена <strong>15 000 ₽</strong> вместо 25 000 ₽ для первых трёх компаний. Осталось мест: <strong id="rSpots">3</strong></p>
+        <p class="pilot">Пилотная цена <strong>15 000 ₽</strong> вместо 25 000 ₽ для первых трех компаний. Осталось мест: <strong id="rSpots">3</strong></p>
         <a class="btn" id="tgBtn" href="#" target="_blank" rel="noopener">Записаться на диагностику</a>
         <p class="cta-note">Откроется Telegram с готовым сообщением. Я отвечу в течение рабочего дня.</p>
         <p class="cta-note" id="tgAlt">Не открывается? <a href="#" id="tgApp">Открыть в приложении Telegram</a> · <button class="link-btn" id="tgCopy" type="button">Скопировать сообщение</button><br>Или найдите меня в Telegram: <strong id="tgName"></strong></p>
