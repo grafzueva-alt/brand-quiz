@@ -75,6 +75,34 @@
   var $ = function (id) { return document.getElementById(id); };
   var screens = document.querySelectorAll(".screen");
 
+  /* ---------- Типографика: неразрывные пробелы ---------- */
+  var NB = String.fromCharCode(160);
+  var SHORT = /(^|[\s(«„"])([А-Яа-яЁё]{1,2}|для|без|над|под|при|про|или|что|как)\s+(?=\S)/g;
+  var NUM_UNIT = /(\d)\s+(₽|руб\.|часа|часов|час|минут[аы]?|страниц[аыу]?|вопрос(?:а|ов)?|мест[оа]?|дня|дней|день|недел[июья]|лет|из)(?![а-яё])/gi;
+  function typo(s) {
+    return s
+      // короткие слова и предлоги не остаются в конце строки (второй проход: «и в», «не на»)
+      .replace(SHORT, "$1$2" + NB).replace(SHORT, "$1$2" + NB)
+      // тысячи: 15 000
+      .replace(/(^|[^\d])(\d{1,3})[ \xA0](\d{3})(?!\d)/g, "$1$2" + NB + "$3")
+      // число и единица: 15 000 ₽, 1,5 часа, 3–4 страницы, 1 из 8
+      .replace(NUM_UNIT, "$1" + NB + "$2")
+      // короткое тире не отрывается от слова перед ним
+      .replace(/[ \xA0]+–(?=\s)/g, NB + "–");
+  }
+  function typograph(root) {
+    if (!root) return;
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var nodes = [], n;
+    while ((n = walker.nextNode())) nodes.push(n);
+    nodes.forEach(function (t) {
+      var tag = t.parentNode && t.parentNode.nodeName;
+      if (tag === "SCRIPT" || tag === "STYLE") return;
+      var v = typo(t.nodeValue);
+      if (v !== t.nodeValue) t.nodeValue = v;
+    });
+  }
+
   /* ---------- Метрика (включается, только если в config.js указан номер счетчика) ---------- */
   function initMetrika() {
     if (!CFG.metrikaId) return;
@@ -131,6 +159,7 @@
         }
       }, 180);
     }, state.answers[state.step]);
+    typograph(document.body);
   }
 
   function goBack() {
@@ -157,13 +186,20 @@
       var i = QUESTIONS.map(function (q) { return q.zone; }).indexOf(zone);
       if (i >= 0 && state.answers[i] < worstScore) { worst = zone; worstScore = state.answers[i]; }
     });
-    return { sum: sum, score10: score10, level: level, zone: worst, zoneLabel: worstScore === 2 ? "Главная точка роста" : "Главная зона риска" };
+    // Слабые зоны (0 баллов), кроме главной: попадут в сообщение, чтобы сразу видеть, с чем человек пришел
+    var weak = [];
+    QUESTIONS.forEach(function (q, i) {
+      if (q.zone && state.answers[i] === 0 && q.zone !== worst) weak.push(q.zone);
+    });
+    return { sum: sum, score10: score10, level: level, zone: worst, weak: weak, zoneLabel: worstScore === 2 ? "Главная точка роста" : "Главная зона риска" };
   }
 
   /* ---------- Кнопка в Telegram с готовым текстом ---------- */
   function telegramText(res) {
-    return "Здравствуйте, Светлана! Хочу записаться на бренд-диагностику. Результат квиза: " +
-      res.score10 + " из 10, " + res.zoneLabel.toLowerCase() + ": " + res.zone + ".";
+    var t = "Здравствуйте, Светлана! Хочу записаться на бренд-диагностику. Результат квиза: " +
+      res.score10 + " из 10. " + res.zoneLabel + ": " + res.zone + ".";
+    if (res.weak && res.weak.length) t += " Слабые зоны: " + res.weak.join(", ") + ".";
+    return t;
   }
   function telegramUrl(res) {
     if (!CFG.telegramUser) return "#";
@@ -241,6 +277,7 @@
       sym.appendChild(li);
     });
 
+    typograph(document.body);
     show("result");
     // Полоски заполняются после показа экрана, чтобы сработала анимация
     setTimeout(function () {
@@ -259,13 +296,13 @@
   function initAnalytics() {
     if (!CFG.metrikaId) return;
     var choice = cookieChoice();
-    if (choice === "yes") { initMetrika(); return; }
+    if (choice === "yes") { initMetrika(); goal("quiz_open"); return; }
     if (choice === "no") return;
     $("cookie").hidden = false;
     document.body.classList.add("has-cookie");
     $("cookieOk").addEventListener("click", function () {
       saveCookieChoice("yes"); $("cookie").hidden = true;
-      document.body.classList.remove("has-cookie"); initMetrika();
+      document.body.classList.remove("has-cookie"); initMetrika(); goal("quiz_open");
     });
     $("cookieNo").addEventListener("click", function () {
       saveCookieChoice("no"); $("cookie").hidden = true;
@@ -274,6 +311,7 @@
   }
 
   function init() {
+    typograph(document.body);
     initAnalytics();
 
     // Фото: если файла нет, остается заглушка с инициалами
