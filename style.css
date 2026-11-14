@@ -142,6 +142,7 @@ p { margin: 0 0 12px; }
 .risk p:last-child { margin: 0; font-weight: 700; }
 .pilot { background: rgba(255,255,255,.14); border-radius: 12px; padding: 12px 14px; margin: 16px 0; }
 .card .lead-in { margin: 12px 0 0; }
+.card[hidden], .risk[hidden] { display: none; }
 .pilot-credit { display: block; margin-top: 8px; font-size: 14px; color: #dfe4ff; }
 .card.accent .btn { background: var(--white); color: var(--blue); }
 

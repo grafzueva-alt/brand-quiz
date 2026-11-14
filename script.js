@@ -69,6 +69,18 @@
       text: "База у вас сильная, и это не комплимент для вежливости. Скорее всего, не хватает точных формулировок того, за что вас выбирают, чтобы сайт, соцсети и предложения говорили одним голосом." }
   ];
 
+  // Отдельный итог для 10 из 10 (все шесть зон «сильно»): диагностику не предлагаем
+  var PERFECT = {
+    perfect: true,
+    title: "Десять из десяти. Мне тут, похоже, нечего делать",
+    symptoms: [
+      "Клиенты приходят сами и понимают, за что платят.",
+      "Сайт, соцсети и предложения говорят одним голосом.",
+      "Продажи не держатся на вас одном."
+    ],
+    text: "По вашим ответам упаковка уже продает за вас. Честно: бренд-диагностика вам сейчас, скорее всего, не нужна, и загонять вас в нее я не буду. Можете смело брать отпуск."
+  };
+
   // Ответы живут только в памяти страницы: никуда не отправляются и не сохраняются
   var state = { answers: [], step: 0 };
 
@@ -178,7 +190,7 @@
       if (q.scored !== false) sum += state.answers[i];
     });
     var score10 = Math.round(sum / MAX_SCORE * 10);
-    var level = LEVELS.filter(function (l) { return score10 <= l.max; })[0];
+    var level = score10 === 10 ? PERFECT : LEVELS.filter(function (l) { return score10 <= l.max; })[0];
 
     // Зона риска: самый низкий балл среди зон из RISK_PRIORITY; при равенстве берем ту, что выше в списке
     var worst = null, worstScore = 99;
@@ -191,7 +203,7 @@
     QUESTIONS.forEach(function (q, i) {
       if (q.zone && state.answers[i] === 0 && q.zone !== worst) weak.push(q.zone);
     });
-    return { sum: sum, score10: score10, level: level, zone: worst, weak: weak, zoneLabel: worstScore === 2 ? "Главная точка роста" : "Главная зона риска" };
+    return { sum: sum, score10: score10, level: level, perfect: score10 === 10, zone: worst, weak: weak, zoneLabel: worstScore === 2 ? "Главная точка роста" : "Главная зона риска" };
   }
 
   /* ---------- Кнопка в Telegram с готовым текстом ---------- */
@@ -201,15 +213,16 @@
     if (res.weak && res.weak.length) t += " Слабые зоны: " + res.weak.join(", ") + ".";
     return t;
   }
-  function telegramUrl(res) {
+  function telegramUrl(res, text) {
     if (!CFG.telegramUser) return "#";
-    return "https://t.me/" + CFG.telegramUser + "?text=" + encodeURIComponent(telegramText(res));
+    return "https://t.me/" + CFG.telegramUser + "?text=" + encodeURIComponent(text || telegramText(res));
   }
   // Запасная ссылка: открывает установленное приложение Telegram напрямую, минуя сайт t.me
-  function telegramAppUrl(res) {
+  function telegramAppUrl(res, text) {
     if (!CFG.telegramUser) return "#";
-    return "tg://resolve?domain=" + CFG.telegramUser + "&text=" + encodeURIComponent(telegramText(res));
+    return "tg://resolve?domain=" + CFG.telegramUser + "&text=" + encodeURIComponent(text || telegramText(res));
   }
+  var SOFT_TEXT = "Здравствуйте, Светлана! Прошла квиз на 10 из 10 и хочу проверить, видят ли это же мои клиенты.";
   function copyText(text, done) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text, done); });
@@ -239,6 +252,15 @@
     $("tgBtn").href = isMobile ? telegramUrl(res) : telegramAppUrl(res);
     if (CFG.telegramUser) { $("tgBtn").target = isMobile ? "_blank" : "_self"; }
 
+    // 10 из 10: вместо диагностики и цены показываем мягкий блок, без «главной точки роста»
+    var perfect = !!res.perfect;
+    $("diagCard").hidden = perfect;
+    $("offerCard").hidden = perfect;
+    $("riskBox").hidden = perfect;
+    $("softCard").hidden = !perfect;
+    $("softBtn").href = isMobile ? telegramUrl(res, SOFT_TEXT) : telegramAppUrl(res, SOFT_TEXT);
+    if (CFG.telegramUser) { $("softBtn").target = isMobile ? "_blank" : "_self"; }
+
     // Запасные способы связаться, если ссылка t.me не открывается (например, на компьютере)
     $("tgAlt").hidden = !CFG.telegramUser;
     $("tgName").textContent = "@" + (CFG.telegramUser || "");
@@ -260,7 +282,7 @@
       if (!q.zone) return;
       var st = ZONE_STATES[state.answers[i]];
       var li = document.createElement("li");
-      li.className = "zone " + st.cls + (q.zone === res.zone ? " is-risk" : "");
+      li.className = "zone " + st.cls + (q.zone === res.zone && !res.perfect ? " is-risk" : "");
       li.innerHTML = '<div class="zone-head"><span></span><span class="zone-state"></span></div>' +
         '<div class="zone-track"><span class="zone-fill"></span></div>';
       li.querySelector(".zone-head span").textContent = q.zone;
@@ -335,6 +357,7 @@
     $("backBtn").addEventListener("click", goBack);
     $("tgBtn").addEventListener("click", function () { goal("tg_click"); });
     $("tgApp").addEventListener("click", function () { goal("tg_click"); });
+    $("softBtn").addEventListener("click", function () { goal("tg_soft_click"); });
   }
 
   init();
