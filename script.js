@@ -245,7 +245,6 @@
     $("rText").textContent = res.level.text;
     $("rRiskLabel").textContent = res.zoneLabel;
     $("rRisk").textContent = res.zone;
-    $("rSpots").textContent = CFG.pilotSpotsLeft;
     // На телефоне ссылка t.me открывает приложение сама. На компьютере сайт t.me может не открываться,
     // поэтому основная кнопка сразу зовет установленное приложение Telegram.
     var isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
